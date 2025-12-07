@@ -1,0 +1,5 @@
+/mnt/c/Users/HP/Desktop/清华/cs61c_2020/Project/proj4/.venv/lib/python3.12/site-packages/numc.cpython-312-x86_64-linux-gnu.so
+/mnt/c/Users/HP/Desktop/清华/cs61c_2020/Project/proj4/.venv/lib/python3.12/site-packages/numc-1.0-py3.12.egg-info/dependency_links.txt
+/mnt/c/Users/HP/Desktop/清华/cs61c_2020/Project/proj4/.venv/lib/python3.12/site-packages/numc-1.0-py3.12.egg-info/PKG-INFO
+/mnt/c/Users/HP/Desktop/清华/cs61c_2020/Project/proj4/.venv/lib/python3.12/site-packages/numc-1.0-py3.12.egg-info/SOURCES.txt
+/mnt/c/Users/HP/Desktop/清华/cs61c_2020/Project/proj4/.venv/lib/python3.12/site-packages/numc-1.0-py3.12.egg-info/top_level.txt
