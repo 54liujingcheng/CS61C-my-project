@@ -286,28 +286,61 @@ int pow_matrix(matrix *result, matrix *mat, int pow) {
     		else result->data[i][j]=0;
 		}
 	}
-	matrix* tmp=NULL;
+	matrix* tmp=NULL,*base=NULL;
 	if(allocate_matrix(&tmp,result->rows,result->cols)!=0){
-		free(tmp);
 		return -1;
 	}
-	for(int i=0;i<pow;i++){
+	if(allocate_matrix(&base,result->rows,result->cols)!=0){
+		deallocate_matrix(tmp);
+		return -1;
+	}
+	for(int i=0;i<result->rows;i++){
+    	for(int j=0;j<result->cols/4*4;j+=4){
+    		__m256d vec=_mm256_loadu_pd(&mat->data[i][j]);
+			_mm256_storeu_pd(&base->data[i][j],vec);
+		}
+		for(int j=result->cols/4*4;j<result->cols;j++){
+			base->data[i][j]=mat->data[i][j];
+		}
+	}
+	while(pow){
+		if(pow&1){
+			for(int j=0;j<result->rows;j++){
+				for(int k=0;k<result->cols/4*4;k+=4){
+					__m256d vec=_mm256_loadu_pd(&result->data[j][k]);
+					_mm256_storeu_pd(&tmp->data[j][k],vec);
+				}
+				for(int k=result->cols/4*4;k<result->cols;k++){
+					tmp->data[j][k]=result->data[j][k];
+				}
+			}
+			int rtn=mul_matrix(result,tmp,base);
+			if(rtn==-1){
+				deallocate_matrix(tmp);
+				deallocate_matrix(base); 
+				return -1;
+			}
+		}
+		pow>>=1;
+		if(pow==0)break;
 		for(int j=0;j<result->rows;j++){
 			for(int k=0;k<result->cols/4*4;k+=4){
-				__m256d vec=_mm256_loadu_pd(&result->data[j][k]);
+				__m256d vec=_mm256_loadu_pd(&base->data[j][k]);
 				_mm256_storeu_pd(&tmp->data[j][k],vec);
 			}
 			for(int k=result->cols/4*4;k<result->cols;k++){
-				tmp->data[j][k]=result->data[j][k];
+				tmp->data[j][k]=base->data[j][k];
 			}
 		}
-		int rtn=mul_matrix(result,tmp,mat);
+		int rtn=mul_matrix(base,tmp,tmp);
 		if(rtn==-1){
 			deallocate_matrix(tmp);
+			deallocate_matrix(base);
 			return -1;
 		}
 	}
 	deallocate_matrix(tmp);
+	deallocate_matrix(base);
 	return 0;
 }
 
@@ -342,4 +375,3 @@ int abs_matrix(matrix *result, matrix *mat) {
 	}
 	return 0;
 }
-
